@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PlayZone: tu portal de juegos de navegador gratuitos.">
+  <title>PlayZone | Juegos online</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="PlayZone inicio"><span class="brand-mark">▶</span> Play<span>Zone</span></a>
+    <nav class="nav">
+      <a href="#juegos">Juegos</a>
+      <button class="admin-open" id="openAdmin" type="button">⚙ Administrar</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">🎮 TU ZONA DE JUEGOS</span>
+        <h1>Encuentra tu próximo<br><span>juego favorito.</span></h1>
+        <p>Juegos de navegador para disfrutar cuando quieras.</p>
+        <a class="primary-btn" href="#juegos">Explorar juegos <span>↓</span></a>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <div class="float-card card-one">🏎️</div>
+        <div class="float-card card-two">🕹️</div>
+        <div class="float-card card-three">⚽</div>
+        <div class="hero-circle">PLAY<br><b>ZONE</b></div>
+      </div>
+    </section>
+
+    <section class="games-section" id="juegos">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">LA COLECCIÓN</span>
+          <h2>Todos los juegos</h2>
+        </div>
+        <span class="game-count" id="gameCount">0 juegos</span>
+      </div>
+
+      <label class="search-box">
+        <span>⌕</span>
+        <input id="searchInput" type="search" placeholder="Busca un juego..." autocomplete="off">
+        <kbd>BUSCAR</kbd>
+      </label>
+
+      <div class="filters" id="categoryFilters" aria-label="Filtrar por categoría"></div>
+      <div class="games-grid" id="gamesGrid"></div>
+      <p class="empty-state" id="emptyState" hidden>No hay juegos que coincidan con tu búsqueda.</p>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand footer-brand" href="#">▶ Play<span>Zone</span></a>
+    <p>Un sitio para descubrir juegos de navegador.</p>
+  </footer>
+
+  <!-- Visor de juegos -->
+  <div class="modal" id="gameModal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-game></div>
+    <section class="game-window" role="dialog" aria-modal="true" aria-labelledby="gameTitle">
+      <div class="game-window-head">
+        <div><span class="live-dot"></span><strong id="gameTitle">Juego</strong></div>
+        <div class="window-actions">
+          <a id="openExternal" class="small-action" href="#" target="_blank" rel="noopener noreferrer">Abrir en otra pestaña ↗</a>
+          <button class="close-btn" type="button" data-close-game aria-label="Cerrar">✕</button>
+        </div>
+      </div>
+      <div class="iframe-wrap" id="iframeWrap"></div>
+      <p class="embed-note" id="embedNote">Si el juego no carga, prueba a abrirlo en otra pestaña.</p>
+    </section>
+  </div>
+
+  <!-- Panel de administración -->
+  <div class="modal admin-modal" id="adminModal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-admin></div>
+    <section class="admin-window" role="dialog" aria-modal="true" aria-labelledby="adminTitle">
+      <div class="admin-head">
+        <div><span class="eyebrow">GESTIÓN DE PLAYZONE</span><h2 id="adminTitle">Panel de administración</h2></div>
+        <button class="close-btn" type="button" data-close-admin aria-label="Cerrar">✕</button>
+      </div>
+
+      <div id="adminLogin" class="login-box">
+        <p>Inicia sesión con la cuenta administradora creada en Supabase.</p>
+        <form id="loginForm">
+          <label>Correo electrónico
+            <input id="adminEmail" type="email" autocomplete="username" placeholder="tu-correo@ejemplo.com" required>
+          </label>
+          <label>Contraseña
+            <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Tu contraseña" required>
+          </label>
+          <button class="primary-btn" type="submit" id="loginButton">Entrar al panel</button>
+          <p class="form-message" id="loginMessage" role="status"></p>
+        </form>
+        <p class="security-note">El acceso se verifica mediante Supabase Auth. No compartas tu contraseña. Los registros públicos deben permanecer desactivados en Supabase.</p>
+      </div>
+
+      <div id="adminContent" hidden>
+        <div class="admin-toolbar">
+          <p>Añade, modifica o elimina juegos de tu catálogo.</p>
+          <button class="text-btn" id="logoutBtn" type="button">Cerrar sesión</button>
+        </div>
+        <form id="gameForm" class="game-form">
+          <input type="hidden" id="editId">
+          <div class="form-grid">
+            <label>Nombre del juego *
+              <input id="gameName" maxlength="60" placeholder="Ej. Drift Hunters" required>
+            </label>
+            <label>Categoría *
+              <input id="gameCategory" maxlength="30" placeholder="Ej. Coches" required>
+            </label>
+            <label class="full">Enlace del juego *
+              <input id="gameUrl" type="url" placeholder="https://..." required>
+            </label>
+            <label class="full">Imagen (URL)
+              <input id="gameImage" type="url" placeholder="https://... (opcional)">
+            </label>
+            <label class="full">Modo de apertura
+              <select id="gameMode">
+                <option value="auto">Intentar dentro de PlayZone (iframe)</option>
+                <option value="external">Abrir en la página original</option>
+              </select>
+            </label>
+            <label class="full checkbox-label"><input id="gameFeatured" type="checkbox"> Destacar este juego</label>
+          </div>
+          <div class="form-buttons">
+            <button class="primary-btn" type="submit" id="saveGameBtn">＋ Añadir juego</button>
+            <button class="secondary-btn" type="button" id="cancelEditBtn" hidden>Cancelar edición</button>
+          </div>
+          <p class="form-message" id="gameMessage" role="status"></p>
+        </form>
+
+        <div class="admin-list-head"><h3>Juegos guardados</h3><span id="adminGameCount"></span></div>
+        <div class="admin-list" id="adminGameList"></div>
+        <p class="security-note">Los juegos se guardan en Supabase y se muestran a todos los visitantes. Mantén desactivados los registros públicos y crea administradores únicamente desde el panel de Supabase.</p>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js"></script>
+</body>
+</html>
